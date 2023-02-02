@@ -30,20 +30,36 @@ exports.videosRouter.get("/:id", (req, res) => {
     }
 });
 // POST
+// TODO Define correct video qualities
 exports.videosRouter.post("/", (req, res) => {
     const title = req.body.title;
     const author = req.body.author;
+    const minAgeRestriction = req.body.minAgeRestriction;
     const availableResolutions = req.body.availableResolutions;
+    const currentDate = new Date().toISOString();
+    const tomorrowDate = new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString();
     const newVideo = {
         id: +new Date(),
         title: title,
         author: author,
         canBeDownloaded: false,
-        minAgeRestriction: null,
-        createdAt: new Date().toISOString(),
-        publicationDate: new Date().toISOString(),
+        minAgeRestriction: minAgeRestriction,
+        createdAt: currentDate,
+        publicationDate: tomorrowDate,
         availableResolutions: availableResolutions,
     };
-    videosDataBase.push(newVideo);
-    res.status(201).send(newVideo);
+    const errorObject = {
+        errorsMessages: [
+            {
+                message: "string",
+                field: "string",
+            },
+        ],
+    };
+    if (newVideo.minAgeRestriction === null || newVideo.minAgeRestriction <= 18) {
+        videosDataBase.push(newVideo);
+        res.status(201).send(newVideo);
+        return;
+    }
+    res.status(400).send(errorObject);
 });
