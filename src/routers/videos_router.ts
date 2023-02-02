@@ -17,6 +17,6 @@ const videos = [
 
 export const videosRouter = Router({});
 
-videosRouter.get('/videos', (req: Request, res: Response) => {
+videosRouter.get('/', (req: Request, res: Response) => {
     res.send(videos)
 })
