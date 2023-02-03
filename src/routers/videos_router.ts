@@ -14,7 +14,8 @@ type VideosType = {
   availableResolutions: AvailableResolutions;
 };
 
-const videosDataBase: VideosType[] = [/*
+const videosDataBase: VideosType[] = [
+  /*
   {
     id: 0,
     title: "Star Wars: Episode III – Revenge of the Sith",
@@ -35,7 +36,8 @@ const videosDataBase: VideosType[] = [/*
     publicationDate: "1999-12-06T08:00:00.000Z",
     availableResolutions: ["P144", "P1080"],
   },
-*/];
+*/
+];
 const validResolutions = [
   "P144",
   "P240",
@@ -48,7 +50,7 @@ const validResolutions = [
 ];
 const currentDate = new Date().toISOString();
 const tomorrowDate = new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString();
-const errorObject = { errorsMessages: [{ message: "Error", field: "..." }] }
+const errorObject = { errorsMessages: [{ message: "Error", field: "..." }] };
 
 const qualityCheck = (arr: string[], arr2: string[]) => {
   return arr.every((res: string) => arr2.includes(res));
@@ -87,6 +89,20 @@ videosRouter.post("/", (req: Request, res: Response) => {
     availableResolutions: availableResolutions,
   };
 
+  // Setting default values if they were not received from client
+
+  if (!canBeDownloaded) {
+    newVideo.canBeDownloaded = false;
+  }
+
+  if (!minAgeRestriction) {
+    newVideo.minAgeRestriction = null;
+  }
+
+  if (!availableResolutions) {
+    newVideo.availableResolutions = ["P1080"]
+  }
+
   // Validation
 
   if (
@@ -111,6 +127,29 @@ videosRouter.post("/", (req: Request, res: Response) => {
       }
     }
   }
+
+  // if (
+  //   author &&
+  //   typeof author === "string" &&
+  //   title &&
+  //   typeof title === "string"
+  // ) {
+  //   if (!canBeDownloaded || typeof canBeDownloaded === "boolean") {
+  //     if (
+  //       !minAgeRestriction ||
+  //       (minAgeRestriction <= 18 && typeof minAgeRestriction === "number")
+  //     ) {
+  //       if (
+  //         !availableResolutions ||
+  //         qualityCheck(availableResolutions, validResolutions)
+  //       ) {
+  //         videosDataBase.push(newVideo);
+  //         res.status(201).send(newVideo);
+  //         return;
+  //       }
+  //     }
+  //   }
+  // }
   res.status(400).send(errorObject);
 });
 
