@@ -13,31 +13,16 @@ type VideosType = {
   publicationDate: string;
   availableResolutions: AvailableResolutions;
 };
+type ErrorMessageType = {
+  errorsMessages: [
+    {
+      message: string;
+      field: string;
+    }
+  ];
+};
 
-const videosDataBase: VideosType[] = [
-  /*
-        {
-          id: 0,
-          title: "Star Wars: Episode III – Revenge of the Sith",
-          author: "George Lucas",
-          canBeDownloaded: true,
-          minAgeRestriction: null,
-          createdAt: "2015-05-15T00:00:00.000Z",
-          publicationDate: "2015-05-15T08:00:00.000Z",
-          availableResolutions: ["P144"],
-        },
-        {
-          id: 1,
-          title: "The Green Mile",
-          author: "Frank Darabont",
-          canBeDownloaded: false,
-          minAgeRestriction: 16,
-          createdAt: "1999-12-06T00:00:00.000Z",
-          publicationDate: "1999-12-06T08:00:00.000Z",
-          availableResolutions: ["P144", "P1080"],
-        },
-      */
-];
+const videosDataBase: VideosType[] = [];
 const validResolutions = [
   "P144",
   "P240",
@@ -50,7 +35,14 @@ const validResolutions = [
 ];
 const currentDate = new Date().toISOString();
 const tomorrowDate = new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString();
-const errorObject = { errorsMessages: [{ message: "Error", field: "..." }] };
+const errorObject: ErrorMessageType = {
+  errorsMessages: [
+    {
+      message: "ERROR",
+      field: "in field",
+    },
+  ],
+};
 
 const qualityCheck = (arr: string[], arr2: string[]) => {
   return arr.every((res: string) => arr2.includes(res));
@@ -58,14 +50,14 @@ const qualityCheck = (arr: string[], arr2: string[]) => {
 
 // GET without URI params
 videosRouter.get("/", (req: Request, res: Response) => {
-  res.send(videosDataBase);
+  res.json(videosDataBase);
 });
 
 // GET with URI params
 videosRouter.get("/:id", (req: Request, res: Response) => {
   const video = videosDataBase.find((video) => video.id === +req.params.id);
   if (video) {
-    res.send(video);
+    res.json(video);
     return;
   }
   res.sendStatus(404);
@@ -107,13 +99,13 @@ videosRouter.post("/", (req: Request, res: Response) => {
           qualityCheck(availableResolutions, validResolutions)
         ) {
           videosDataBase.push(newVideo);
-          res.status(201).send(newVideo);
+          res.status(201).json(newVideo);
           return;
         }
       }
     }
   }
-  res.status(400).send(errorObject);
+  res.status(400).json(errorObject);
 });
 
 // PUT
@@ -151,14 +143,14 @@ videosRouter.put("/:id", (req: Request, res: Response) => {
               video.canBeDownloaded = canBeDownloaded || false;
               video.minAgeRestriction = minAgeRestriction || null;
               video.publicationDate = publicationDate || tomorrowDate;
-              res.status(204).send(video);
+              res.status(204).json(video);
               return;
             }
           }
         }
       }
     }
-    res.status(400).send(errorObject);
+    res.status(400).json(errorObject);
   }
   res.sendStatus(404);
 });
@@ -172,5 +164,5 @@ videosRouter.delete("/:id", (req: Request, res: Response) => {
       return;
     }
   }
-    res.sendStatus(404);
+  res.sendStatus(404);
 });
