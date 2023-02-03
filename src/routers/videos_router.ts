@@ -48,14 +48,8 @@ const validResolutions = [
 ];
 const currentDate = new Date().toISOString();
 const tomorrowDate = new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString();
-const errorObject = {
-  errorsMessages: [
-    {
-      message: "ERROR",
-      field: "On field ...",
-    },
-  ],
-};
+const errorObject = { errorsMessages: [{ message: "Error", field: "..." }] }
+
 const qualityCheck = (arr: string[], arr2: string[]) => {
   return arr.every((res: string) => arr2.includes(res));
 };
