@@ -89,20 +89,6 @@ videosRouter.post("/", (req: Request, res: Response) => {
     availableResolutions: availableResolutions || ["P1080"],
   };
 
-  // Setting default values if they were not received from client
-
-  // if (!canBeDownloaded) {
-  //   newVideo.canBeDownloaded = false;
-  // }
-  //
-  // if (!minAgeRestriction) {
-  //   newVideo.minAgeRestriction = null;
-  // }
-  //
-  // if (!availableResolutions) {
-  //   newVideo.availableResolutions = ["P1080"];
-  // }
-
   // Validation
 
   if (
@@ -168,7 +154,6 @@ videosRouter.put("/:id", (req: Request, res: Response) => {
               res.status(204).send(video);
               return;
             }
-
           }
         }
       }
@@ -184,8 +169,10 @@ videosRouter.delete("/:id", (req: Request, res: Response) => {
   for (let i = 0; i < videosDataBase.length; i++) {
     if (videosDataBase[i].id === +req.params.id) {
       videosDataBase.splice(i, 1);
-      res.send(404);
+      res.sendStatus(204);
       return;
+    } else {
+      res.sendStatus(404)
     }
   }
 });
