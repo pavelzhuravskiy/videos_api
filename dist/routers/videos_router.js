@@ -5,27 +5,27 @@ const express_1 = require("express");
 exports.videosRouter = (0, express_1.Router)({});
 const videosDataBase = [
 /*
-    {
-      id: 0,
-      title: "Star Wars: Episode III – Revenge of the Sith",
-      author: "George Lucas",
-      canBeDownloaded: true,
-      minAgeRestriction: null,
-      createdAt: "2015-05-15T00:00:00.000Z",
-      publicationDate: "2015-05-15T08:00:00.000Z",
-      availableResolutions: ["P144"],
-    },
-    {
-      id: 1,
-      title: "The Green Mile",
-      author: "Frank Darabont",
-      canBeDownloaded: false,
-      minAgeRestriction: 16,
-      createdAt: "1999-12-06T00:00:00.000Z",
-      publicationDate: "1999-12-06T08:00:00.000Z",
-      availableResolutions: ["P144", "P1080"],
-    },
-  */
+      {
+        id: 0,
+        title: "Star Wars: Episode III – Revenge of the Sith",
+        author: "George Lucas",
+        canBeDownloaded: true,
+        minAgeRestriction: null,
+        createdAt: "2015-05-15T00:00:00.000Z",
+        publicationDate: "2015-05-15T08:00:00.000Z",
+        availableResolutions: ["P144"],
+      },
+      {
+        id: 1,
+        title: "The Green Mile",
+        author: "Frank Darabont",
+        canBeDownloaded: false,
+        minAgeRestriction: 16,
+        createdAt: "1999-12-06T00:00:00.000Z",
+        publicationDate: "1999-12-06T08:00:00.000Z",
+        availableResolutions: ["P144", "P1080"],
+      },
+    */
 ];
 const validResolutions = [
     "P144",
@@ -52,10 +52,9 @@ exports.videosRouter.get("/:id", (req, res) => {
     const video = videosDataBase.find((video) => video.id === +req.params.id);
     if (video) {
         res.send(video);
+        return;
     }
-    else {
-        res.sendStatus(404);
-    }
+    res.sendStatus(404);
 });
 // POST
 exports.videosRouter.post("/", (req, res) => {
@@ -131,9 +130,7 @@ exports.videosRouter.put("/:id", (req, res) => {
         }
         res.status(400).send(errorObject);
     }
-    else {
-        res.sendStatus(404);
-    }
+    res.sendStatus(404);
 });
 // DELETE
 exports.videosRouter.delete("/:id", (req, res) => {
@@ -143,8 +140,7 @@ exports.videosRouter.delete("/:id", (req, res) => {
             res.sendStatus(204);
             return;
         }
-        else {
-            res.sendStatus(404);
-        }
     }
+    res.sendStatus(404);
 });
+//?
