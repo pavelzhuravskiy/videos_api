@@ -127,9 +127,9 @@ videosRouter.put("/:id", (req: Request, res: Response) => {
     const id = +req.params.id;
     const title = req.body.title;
     const author = req.body.author;
+    const availableResolutions = req.body.availableResolutions;
     const canBeDownloaded = req.body.canBeDownloaded;
     const minAgeRestriction = req.body.minAgeRestriction;
-    const availableResolutions = req.body.availableResolutions;
     const updatedVideo: VideosType = {
       id: id,
       title: title,
@@ -140,18 +140,32 @@ videosRouter.put("/:id", (req: Request, res: Response) => {
       publicationDate: tomorrowDate,
       availableResolutions: availableResolutions,
     };
-    if (author && author.length <= 20 && title && title.length <= 40) {
-      if (
-        !updatedVideo.minAgeRestriction ||
-        updatedVideo.minAgeRestriction <= 18
-      ) {
+    if (
+      author &&
+      typeof author === "string" &&
+      author.length <= 20 &&
+      title &&
+      typeof title === "string" &&
+      title.length <= 40
+    ) {
+      if (!canBeDownloaded || typeof canBeDownloaded === "boolean") {
         if (
-          availableResolutions.every((res: string) =>
-            validResolutions.includes(res)
-          )
+          !minAgeRestriction ||
+          (minAgeRestriction <= 18 && typeof minAgeRestriction === "number")
         ) {
-          res.status(201).send(updatedVideo);
-          return;
+          if (
+            !availableResolutions ||
+            (qualityCheck(availableResolutions, validResolutions) &&
+              availableResolutions.length > 0)
+          ) {
+            video.title = title;
+            video.author = author;
+            video.availableResolutions = availableResolutions;
+            video.canBeDownloaded = canBeDownloaded;
+            video.minAgeRestriction = minAgeRestriction;
+            res.sendStatus(201);
+            return;
+          }
         }
       }
     }
