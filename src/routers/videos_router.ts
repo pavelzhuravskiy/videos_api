@@ -16,27 +16,27 @@ type VideosType = {
 
 const videosDataBase: VideosType[] = [
   /*
-    {
-      id: 0,
-      title: "Star Wars: Episode III – Revenge of the Sith",
-      author: "George Lucas",
-      canBeDownloaded: true,
-      minAgeRestriction: null,
-      createdAt: "2015-05-15T00:00:00.000Z",
-      publicationDate: "2015-05-15T08:00:00.000Z",
-      availableResolutions: ["P144"],
-    },
-    {
-      id: 1,
-      title: "The Green Mile",
-      author: "Frank Darabont",
-      canBeDownloaded: false,
-      minAgeRestriction: 16,
-      createdAt: "1999-12-06T00:00:00.000Z",
-      publicationDate: "1999-12-06T08:00:00.000Z",
-      availableResolutions: ["P144", "P1080"],
-    },
-  */
+      {
+        id: 0,
+        title: "Star Wars: Episode III – Revenge of the Sith",
+        author: "George Lucas",
+        canBeDownloaded: true,
+        minAgeRestriction: null,
+        createdAt: "2015-05-15T00:00:00.000Z",
+        publicationDate: "2015-05-15T08:00:00.000Z",
+        availableResolutions: ["P144"],
+      },
+      {
+        id: 1,
+        title: "The Green Mile",
+        author: "Frank Darabont",
+        canBeDownloaded: false,
+        minAgeRestriction: 16,
+        createdAt: "1999-12-06T00:00:00.000Z",
+        publicationDate: "1999-12-06T08:00:00.000Z",
+        availableResolutions: ["P144", "P1080"],
+      },
+    */
 ];
 const validResolutions = [
   "P144",
@@ -140,6 +140,7 @@ videosRouter.put("/:id", (req: Request, res: Response) => {
     const availableResolutions = req.body.availableResolutions;
     const canBeDownloaded = req.body.canBeDownloaded;
     const minAgeRestriction = req.body.minAgeRestriction;
+    const publicationDate = req.body.publicationDate;
     // const updatedVideo: VideosType = {
     //   id: id,
     //   title: title,
@@ -169,13 +170,17 @@ videosRouter.put("/:id", (req: Request, res: Response) => {
             (qualityCheck(availableResolutions, validResolutions) &&
               availableResolutions.length > 0)
           ) {
-            video.title = title;
-            video.author = author;
-            video.availableResolutions = availableResolutions || ["P1080"];
-            video.canBeDownloaded = canBeDownloaded || false;
-            video.minAgeRestriction = minAgeRestriction || null;
-            res.status(204).send(video);
-            return;
+            if (!publicationDate || typeof publicationDate === "string") {
+              video.title = title;
+              video.author = author;
+              video.availableResolutions = availableResolutions || ["P1080"];
+              video.canBeDownloaded = canBeDownloaded || false;
+              video.minAgeRestriction = minAgeRestriction || null;
+              video.publicationDate = publicationDate || tomorrowDate;
+              res.status(204).send(video);
+              return;
+            }
+
           }
         }
       }
