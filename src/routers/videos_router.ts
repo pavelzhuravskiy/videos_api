@@ -134,7 +134,7 @@ videosRouter.post("/", (req: Request, res: Response) => {
 videosRouter.put("/:id", (req: Request, res: Response) => {
   const video = videosDataBase.find((video) => video.id === +req.params.id);
   if (video) {
-    const id = +req.params.id;
+    // const id = +req.params.id;
     const title = req.body.title;
     const author = req.body.author;
     const availableResolutions = req.body.availableResolutions;
@@ -150,6 +150,7 @@ videosRouter.put("/:id", (req: Request, res: Response) => {
     //   publicationDate: tomorrowDate,
     //   availableResolutions: availableResolutions,
     // };
+
     if (
       author &&
       typeof author === "string" &&
@@ -170,10 +171,10 @@ videosRouter.put("/:id", (req: Request, res: Response) => {
           ) {
             video.title = title;
             video.author = author;
-            video.availableResolutions = availableResolutions;
-            video.canBeDownloaded = canBeDownloaded;
-            video.minAgeRestriction = minAgeRestriction;
-            res.sendStatus(204);
+            video.availableResolutions = availableResolutions || ["P1080"];
+            video.canBeDownloaded = canBeDownloaded || false;
+            video.minAgeRestriction = minAgeRestriction || null;
+            res.status(204).send(video);
             return;
           }
         }
@@ -194,10 +195,4 @@ videosRouter.delete("/:id", (req: Request, res: Response) => {
       return;
     }
   }
-  // const video = videosDataBase.find((video) => video.id === +req.params.id);
-  // if (video) {
-  //   res.sendStatus(204);
-  // } else {
-  //   res.sendStatus(404);
-  // }
 });
