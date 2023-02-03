@@ -165,12 +165,12 @@ videosRouter.put("/:id", (req: Request, res: Response) => {
 
 // DELETE
 videosRouter.delete("/:id", (req: Request, res: Response) => {
-  for (let i = 0; i < videosDataBase.length; i++) {
-    if (videosDataBase[i].id === +req.params.id) {
-      videosDataBase.splice(i, 1);
-      res.sendStatus(204);
-      return;
-    }
-    res.sendStatus(404);
-  }
+  // for (let i = 0; i < videosDataBase.length; i++) {
+  //   if (videosDataBase[i].id === +req.params.id) {
+  //     videosDataBase.splice(i, 1);
+  //     res.sendStatus(204);
+  //     return;
+  //   }
+  // }
+  res.sendStatus(204);
 });
