@@ -82,26 +82,26 @@ videosRouter.post("/", (req: Request, res: Response) => {
     id: +new Date(),
     title: title,
     author: author,
-    canBeDownloaded: canBeDownloaded,
-    minAgeRestriction: minAgeRestriction,
+    canBeDownloaded: canBeDownloaded || false,
+    minAgeRestriction: minAgeRestriction || null,
     createdAt: currentDate,
     publicationDate: tomorrowDate,
-    availableResolutions: availableResolutions,
+    availableResolutions: availableResolutions || ["P1080"],
   };
 
   // Setting default values if they were not received from client
 
-  if (!canBeDownloaded) {
-    newVideo.canBeDownloaded = false;
-  }
-
-  if (!minAgeRestriction) {
-    newVideo.minAgeRestriction = null;
-  }
-
-  if (!availableResolutions) {
-    newVideo.availableResolutions = ["P1080"];
-  }
+  // if (!canBeDownloaded) {
+  //   newVideo.canBeDownloaded = false;
+  // }
+  //
+  // if (!minAgeRestriction) {
+  //   newVideo.minAgeRestriction = null;
+  // }
+  //
+  // if (!availableResolutions) {
+  //   newVideo.availableResolutions = ["P1080"];
+  // }
 
   // Validation
 
@@ -134,24 +134,12 @@ videosRouter.post("/", (req: Request, res: Response) => {
 videosRouter.put("/:id", (req: Request, res: Response) => {
   const video = videosDataBase.find((video) => video.id === +req.params.id);
   if (video) {
-    // const id = +req.params.id;
     const title = req.body.title;
     const author = req.body.author;
     const availableResolutions = req.body.availableResolutions;
     const canBeDownloaded = req.body.canBeDownloaded;
     const minAgeRestriction = req.body.minAgeRestriction;
     const publicationDate = req.body.publicationDate;
-    // const updatedVideo: VideosType = {
-    //   id: id,
-    //   title: title,
-    //   author: author,
-    //   canBeDownloaded: canBeDownloaded,
-    //   minAgeRestriction: minAgeRestriction,
-    //   createdAt: currentDate,
-    //   publicationDate: tomorrowDate,
-    //   availableResolutions: availableResolutions,
-    // };
-
     if (
       author &&
       typeof author === "string" &&
