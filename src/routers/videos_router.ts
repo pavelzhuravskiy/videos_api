@@ -14,7 +14,7 @@ type VideosType = {
   availableResolutions: AvailableResolutions;
 };
 
-const videosDataBase: VideosType[] = [
+const videosDataBase: VideosType[] = [/*
   {
     id: 0,
     title: "Star Wars: Episode III – Revenge of the Sith",
@@ -35,7 +35,7 @@ const videosDataBase: VideosType[] = [
     publicationDate: "1999-12-06T08:00:00.000Z",
     availableResolutions: ["P144", "P1080"],
   },
-];
+*/];
 const validResolutions = [
   "P144",
   "P240",
