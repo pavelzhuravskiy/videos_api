@@ -87,12 +87,12 @@ videosRouter.post("/", (req: Request, res: Response) => {
     errorsArray.splice(0, errorsArray.length)
   }
 
-  if (!author || typeof author !== "string") {
+  if (!author || typeof author !== "string" || author.length > 20) {
     errorInnerObject.field = "author";
     errorsArray.push(errorInnerObject);
   }
 
-  if (!title || typeof title !== "string") {
+  if (!title || typeof title !== "string" || title.length > 40) {
     errorInnerObject.field = "title";
     errorsArray.push(errorInnerObject);
   }
