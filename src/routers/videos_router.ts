@@ -1,5 +1,4 @@
 import { Request, Response, Router } from "express";
-import { testingRouter } from "./testing_router";
 
 export const videosRouter = Router({});
 
@@ -56,7 +55,10 @@ const errorAvailableResolutionsField = {
   message: "Error",
   field: "availableResolutions",
 };
-
+const errorPublicationDateField = {
+  message: "Error",
+  field: "publicationDate",
+};
 
 const errorsArray: ErrorInnerMessageType[] = errorOuterObject.errorsMessages;
 
@@ -111,7 +113,6 @@ videosRouter.post("/", (req: Request, res: Response) => {
 
   if (!title || typeof title !== "string" || title.length > 40) {
     errorsArray.push(errorTitleField);
-    console.log(errorsArray)
   }
 
   if (canBeDownloaded && typeof canBeDownloaded !== "boolean") {
@@ -145,45 +146,63 @@ videosRouter.post("/", (req: Request, res: Response) => {
 videosRouter.put("/:id", (req: Request, res: Response) => {
   const video = videosDataBase.find((video) => video.id === +req.params.id);
   if (video) {
+    // Validation
+
+    // Clearing errors before each validation cycle
+
+    while (errorsArray.length > 0) {
+      errorsArray.splice(0, errorsArray.length);
+    }
+
     const title = req.body.title;
     const author = req.body.author;
     const availableResolutions = req.body.availableResolutions;
     const canBeDownloaded = req.body.canBeDownloaded;
     const minAgeRestriction = req.body.minAgeRestriction;
     const publicationDate = req.body.publicationDate;
-    if (
-      author &&
-      typeof author === "string" &&
-      author.length <= 20 &&
-      title &&
-      typeof title === "string" &&
-      title.length <= 40
-    ) {
-      if (!canBeDownloaded || typeof canBeDownloaded === "boolean") {
-        if (
-          !minAgeRestriction ||
-          (minAgeRestriction <= 18 && typeof minAgeRestriction === "number")
-        ) {
-          if (
-            !availableResolutions ||
-            (qualityCheck(availableResolutions, validResolutions) &&
-              availableResolutions.length > 0)
-          ) {
-            if (!publicationDate || typeof publicationDate === "string") {
-              video.title = title;
-              video.author = author;
-              video.availableResolutions = availableResolutions || ["P1080"];
-              video.canBeDownloaded = canBeDownloaded || false;
-              video.minAgeRestriction = minAgeRestriction || null;
-              video.publicationDate = publicationDate || tomorrowDate;
-              res.status(204).send(video);
-              return;
-            }
-          }
-        }
-      }
+
+    if (!author || typeof author !== "string" || author.length > 20) {
+      errorsArray.push(errorAuthorField);
     }
-    // res.status(400).send(errorObject);
+
+    if (!title || typeof title !== "string" || title.length > 40) {
+      errorsArray.push(errorTitleField);
+    }
+
+    if (canBeDownloaded && typeof canBeDownloaded !== "boolean") {
+      errorsArray.push(errorCanBeDownloadedField);
+    }
+
+    if (
+      minAgeRestriction > 18 ||
+      minAgeRestriction < 1 ||
+      typeof minAgeRestriction === "number"
+    ) {
+      errorsArray.push(errorMinAgeRestrictionField);
+    }
+
+    if (
+      availableResolutions &&
+      !qualityCheck(availableResolutions, validResolutions)
+    ) {
+      errorsArray.push(errorAvailableResolutionsField);
+    }
+
+    if (publicationDate && typeof publicationDate !== "string") {
+      errorsArray.push(errorPublicationDateField);
+    }
+
+    if (errorsArray.length === 0) {
+      video.title = title;
+      video.author = author;
+      video.availableResolutions = availableResolutions || ["P1080"];
+      video.canBeDownloaded = canBeDownloaded || false;
+      video.minAgeRestriction = minAgeRestriction || null;
+      video.publicationDate = publicationDate || tomorrowDate;
+      res.status(204).send(video);
+      return;
+    }
+    res.status(400).send(errorOuterObject);
   }
   res.sendStatus(404);
 });
