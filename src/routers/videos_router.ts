@@ -37,7 +37,7 @@ const currentDate = new Date().toISOString();
 const tomorrowDate = new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString();
 const errorOuterObject = { errorsMessages: [] };
 const errorInnerObject = {
-  message: "message",
+  message: "Error",
   field: "field",
 };
 const errorsArray: ErrorInnerMessageType[] = errorOuterObject.errorsMessages;
@@ -81,17 +81,23 @@ videosRouter.post("/", (req: Request, res: Response) => {
 
   // Validation
 
+  // Clearing errors before each validation cycle
+
+  while (errorsArray.length > 0) {
+    errorsArray.splice(0, errorsArray.length)
+  }
+
   if (!author || typeof author !== "string") {
     errorInnerObject.field = "author";
     errorsArray.push(errorInnerObject);
   }
 
-  if (!title && typeof title !== "string") {
+  if (!title || typeof title !== "string") {
     errorInnerObject.field = "title";
     errorsArray.push(errorInnerObject);
   }
 
-  if (typeof canBeDownloaded === "boolean") {
+  if (canBeDownloaded && typeof canBeDownloaded !== "boolean") {
     errorInnerObject.field = "canBeDownloaded";
     errorsArray.push(errorInnerObject);
   }
@@ -111,12 +117,10 @@ videosRouter.post("/", (req: Request, res: Response) => {
   }
 
   if (errorsArray.length === 0) {
-    console.log(errorsArray)
     videosDataBase.push(newVideo);
     res.status(201).send(newVideo);
     return;
   }
-  console.log(errorOuterObject)
   res.status(400).send(errorOuterObject);
 });
 
