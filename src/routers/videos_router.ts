@@ -54,7 +54,7 @@ const errorMinAgeRestrictionField = {
 };
 const errorAvailableResolutionsField = {
   message: "Error",
-  field: "minAgeRestriction",
+  field: "availableResolutions",
 };
 
 
