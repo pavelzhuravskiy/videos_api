@@ -1,4 +1,4 @@
-import e, { Request, Response, Router } from "express";
+import { Request, Response, Router } from "express";
 import { testingRouter } from "./testing_router";
 
 export const videosRouter = Router({});
@@ -36,10 +36,28 @@ const validResolutions = [
 const currentDate = new Date().toISOString();
 const tomorrowDate = new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString();
 const errorOuterObject = { errorsMessages: [] };
-const errorInnerObject = {
+const errorAuthorField = {
   message: "Error",
-  field: "field",
+  field: "author",
 };
+const errorTitleField = {
+  message: "Error",
+  field: "title",
+};
+const errorCanBeDownloadedField = {
+  message: "Error",
+  field: "canBeDownloaded",
+};
+const errorMinAgeRestrictionField = {
+  message: "Error",
+  field: "minAgeRestriction",
+};
+const errorAvailableResolutionsField = {
+  message: "Error",
+  field: "minAgeRestriction",
+};
+
+
 const errorsArray: ErrorInnerMessageType[] = errorOuterObject.errorsMessages;
 
 const qualityCheck = (arr: string[], arr2: string[]) => {
@@ -84,22 +102,20 @@ videosRouter.post("/", (req: Request, res: Response) => {
   // Clearing errors before each validation cycle
 
   while (errorsArray.length > 0) {
-    errorsArray.splice(0, errorsArray.length)
+    errorsArray.splice(0, errorsArray.length);
   }
 
   if (!author || typeof author !== "string" || author.length > 20) {
-    errorInnerObject.field = "author";
-    errorsArray.push(errorInnerObject);
+    errorsArray.push(errorAuthorField);
   }
 
   if (!title || typeof title !== "string" || title.length > 40) {
-    errorInnerObject.field = "title";
-    errorsArray.push(errorInnerObject);
+    errorsArray.push(errorTitleField);
+    console.log(errorsArray)
   }
 
   if (canBeDownloaded && typeof canBeDownloaded !== "boolean") {
-    errorInnerObject.field = "canBeDownloaded";
-    errorsArray.push(errorInnerObject);
+    errorsArray.push(errorCanBeDownloadedField);
   }
 
   if (
@@ -107,13 +123,14 @@ videosRouter.post("/", (req: Request, res: Response) => {
     minAgeRestriction < 1 ||
     typeof minAgeRestriction === "number"
   ) {
-    errorInnerObject.field = "minAgeRestriction";
-    errorsArray.push(errorInnerObject);
+    errorsArray.push(errorMinAgeRestrictionField);
   }
 
-  if (availableResolutions && !qualityCheck(availableResolutions, validResolutions)) {
-    errorInnerObject.field = "availableResolutions";
-    errorsArray.push(errorInnerObject);
+  if (
+    availableResolutions &&
+    !qualityCheck(availableResolutions, validResolutions)
+  ) {
+    errorsArray.push(errorAvailableResolutionsField);
   }
 
   if (errorsArray.length === 0) {
