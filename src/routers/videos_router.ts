@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import {testingRouter} from "./testing_router";
 
 export const videosRouter = Router({});
 
@@ -173,4 +174,9 @@ videosRouter.delete("/:id", (req: Request, res: Response) => {
     }
   }
     res.sendStatus(404);
+});
+
+// DELETE ALL
+testingRouter.delete("/", (req: Request, res: Response) => {
+  res.sendStatus(204)
 });
