@@ -1,5 +1,5 @@
-import { Request, Response, Router } from "express";
-import {testingRouter} from "./testing_router";
+import e, { Request, Response, Router } from "express";
+import { testingRouter } from "./testing_router";
 
 export const videosRouter = Router({});
 
@@ -15,30 +15,14 @@ type VideosType = {
   availableResolutions: AvailableResolutions;
 };
 
-const videosDataBase: VideosType[] = [
-  /*
-        {
-          id: 0,
-          title: "Star Wars: Episode III – Revenge of the Sith",
-          author: "George Lucas",
-          canBeDownloaded: true,
-          minAgeRestriction: null,
-          createdAt: "2015-05-15T00:00:00.000Z",
-          publicationDate: "2015-05-15T08:00:00.000Z",
-          availableResolutions: ["P144"],
-        },
-        {
-          id: 1,
-          title: "The Green Mile",
-          author: "Frank Darabont",
-          canBeDownloaded: false,
-          minAgeRestriction: 16,
-          createdAt: "1999-12-06T00:00:00.000Z",
-          publicationDate: "1999-12-06T08:00:00.000Z",
-          availableResolutions: ["P144", "P1080"],
-        },
-      */
-];
+// type ErrorOuterMessageType = { errorsMessages: [] }
+//
+type ErrorInnerMessageType = {
+  message: string;
+  field: string;
+};
+
+const videosDataBase: VideosType[] = [];
 const validResolutions = [
   "P144",
   "P240",
@@ -51,7 +35,12 @@ const validResolutions = [
 ];
 const currentDate = new Date().toISOString();
 const tomorrowDate = new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString();
-const errorObject = { errorsMessages: [{ message: "Error", field: "..." }] };
+const errorOuterObject = { errorsMessages: [] };
+const errorInnerObject = {
+  message: "message",
+  field: "field",
+};
+const errorsArray: ErrorInnerMessageType[] = errorOuterObject.errorsMessages;
 
 const qualityCheck = (arr: string[], arr2: string[]) => {
   return arr.every((res: string) => arr2.includes(res));
@@ -92,29 +81,43 @@ videosRouter.post("/", (req: Request, res: Response) => {
 
   // Validation
 
-  if (
-    author &&
-    typeof author === "string" &&
-    title &&
-    typeof title === "string"
-  ) {
-    if (!canBeDownloaded || typeof canBeDownloaded === "boolean") {
-      if (
-        !minAgeRestriction ||
-        (minAgeRestriction <= 18 && typeof minAgeRestriction === "number")
-      ) {
-        if (
-          !availableResolutions ||
-          qualityCheck(availableResolutions, validResolutions)
-        ) {
-          videosDataBase.push(newVideo);
-          res.status(201).send(newVideo);
-          return;
-        }
-      }
-    }
+  if (!author || typeof author !== "string") {
+    errorInnerObject.field = "author";
+    errorsArray.push(errorInnerObject);
   }
-  res.status(400).send(errorObject);
+
+  if (!title && typeof title !== "string") {
+    errorInnerObject.field = "title";
+    errorsArray.push(errorInnerObject);
+  }
+
+  if (typeof canBeDownloaded === "boolean") {
+    errorInnerObject.field = "canBeDownloaded";
+    errorsArray.push(errorInnerObject);
+  }
+
+  if (
+    minAgeRestriction > 18 ||
+    minAgeRestriction < 1 ||
+    typeof minAgeRestriction === "number"
+  ) {
+    errorInnerObject.field = "minAgeRestriction";
+    errorsArray.push(errorInnerObject);
+  }
+
+  if (availableResolutions && !qualityCheck(availableResolutions, validResolutions)) {
+    errorInnerObject.field = "availableResolutions";
+    errorsArray.push(errorInnerObject);
+  }
+
+  if (errorsArray.length === 0) {
+    console.log(errorsArray)
+    videosDataBase.push(newVideo);
+    res.status(201).send(newVideo);
+    return;
+  }
+  console.log(errorOuterObject)
+  res.status(400).send(errorOuterObject);
 });
 
 // PUT
@@ -159,7 +162,7 @@ videosRouter.put("/:id", (req: Request, res: Response) => {
         }
       }
     }
-    res.status(400).send(errorObject);
+    // res.status(400).send(errorObject);
   }
   res.sendStatus(404);
 });
@@ -173,10 +176,13 @@ videosRouter.delete("/:id", (req: Request, res: Response) => {
       return;
     }
   }
-    res.sendStatus(404);
+  res.sendStatus(404);
 });
 
 // DELETE ALL
 videosRouter.delete("/", (req: Request, res: Response) => {
-  res.sendStatus(204)
+  while (videosDataBase.length > 0) {
+    videosDataBase.splice(0, videosDataBase.length);
+  }
+  res.sendStatus(204);
 });
