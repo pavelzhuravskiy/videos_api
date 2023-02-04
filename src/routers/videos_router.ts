@@ -177,6 +177,6 @@ videosRouter.delete("/:id", (req: Request, res: Response) => {
 });
 
 // DELETE ALL
-testingRouter.delete("/", (req: Request, res: Response) => {
+videosRouter.delete("/", (req: Request, res: Response) => {
   res.sendStatus(204)
 });
