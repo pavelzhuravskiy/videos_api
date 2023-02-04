@@ -122,7 +122,7 @@ videosRouter.post("/", (req: Request, res: Response) => {
   if (
     minAgeRestriction > 18 ||
     minAgeRestriction < 1 ||
-    typeof minAgeRestriction === "number"
+    typeof minAgeRestriction !== "number"
   ) {
     errorsArray.push(errorMinAgeRestrictionField);
   }
@@ -174,9 +174,9 @@ videosRouter.put("/:id", (req: Request, res: Response) => {
     }
 
     if (
-      minAgeRestriction > 18 ||
-      minAgeRestriction < 1 ||
-      typeof minAgeRestriction === "number"
+        minAgeRestriction && minAgeRestriction > 18 ||
+        minAgeRestriction && minAgeRestriction < 1 ||
+        minAgeRestriction && typeof minAgeRestriction !== "number"
     ) {
       errorsArray.push(errorMinAgeRestrictionField);
     }
