@@ -14,8 +14,6 @@ type VideosType = {
   availableResolutions: AvailableResolutions;
 };
 
-// type ErrorOuterMessageType = { errorsMessages: [] }
-//
 type ErrorInnerMessageType = {
   message: string;
   field: string;
