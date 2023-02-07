@@ -1,21 +1,12 @@
 import { Request, Response, Router } from "express";
+import { deleteAllVideos } from "../functions/videos_functions";
+import { VideosArrayType, VideosObjectType } from "../types/videos_types";
+
 export const testingRouter = Router({});
-type AvailableResolutions = string[];
-type VideosType = {
-    id: number;
-    title: string;
-    author: string;
-    canBeDownloaded: boolean;
-    minAgeRestriction: null | number;
-    createdAt: string;
-    publicationDate: string;
-    availableResolutions: AvailableResolutions;
-};
-const videosDataBase: VideosType[] = []
+
+const videosDataBase: VideosArrayType = [];
 
 testingRouter.delete("/all-data", (req: Request, res: Response) => {
-    while (videosDataBase.length > 0) {
-        videosDataBase.splice(0, videosDataBase.length);
-    }
-    res.sendStatus(204)
+  deleteAllVideos(videosDataBase);
+  res.sendStatus(204);
 });
