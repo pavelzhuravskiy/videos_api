@@ -101,9 +101,7 @@ videosRouter.post("/", (req: Request, res: Response) => {
 
   // Clearing errors before each validation cycle
 
-  while (errorsArray.length > 0) {
-    errorsArray.splice(0, errorsArray.length);
-  }
+  errorsArray.splice(0, errorsArray.length);
 
   if (!author || typeof author !== "string" || author.length > 20) {
     errorsArray.push(errorAuthorField);
@@ -148,9 +146,8 @@ videosRouter.put("/:id", (req: Request, res: Response) => {
 
     // Clearing errors before each validation cycle
 
-    while (errorsArray.length > 0) {
-      errorsArray.splice(0, errorsArray.length);
-    }
+    errorsArray.splice(0, errorsArray.length);
+
 
     const title = req.body.title;
     const author = req.body.author;
@@ -219,8 +216,6 @@ videosRouter.delete("/:id", (req: Request, res: Response) => {
 
 // DELETE ALL
 videosRouter.delete("/", (req: Request, res: Response) => {
-  while (videosDataBase.length > 0) {
-    videosDataBase.splice(0, videosDataBase.length);
-  }
+  videosDataBase.splice(0, videosDataBase.length);
   res.sendStatus(204);
 });
