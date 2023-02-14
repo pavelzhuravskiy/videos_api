@@ -3,7 +3,7 @@ import { Request, Response, Router } from "express";
 export const videosRouter = Router({});
 
 type AvailableResolutions = string[];
-type VideosType = {
+export type VideosType = {
   id: number;
   title: string;
   author: string;

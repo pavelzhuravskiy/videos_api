@@ -2,7 +2,7 @@ import express from "express";
 import { testingRouter } from "./routers/testing_router";
 import { videosRouter } from "./routers/videos_router";
 
-const app = express();
+export const app = express();
 const port = 3000;
 
 app.use(express.json());
